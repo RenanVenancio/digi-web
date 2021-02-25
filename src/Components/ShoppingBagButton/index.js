@@ -12,8 +12,15 @@ function ShoppingBagButton(props) {
     updateCheckoutProducts(company);
   }, [company]);
 
+  const badgeStyle = {
+    backgroundColor: "#01B6F5",
+    padding: "10px",
+    borderRadius: "300px"
+  }
+
   return (
     <BadgeOverlay
+      style={badgeStyle}
       isHidden={checkoutProducts.products.length > 0 ? false : true}
       variant="brand"
       position="bottom-right"
