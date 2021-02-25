@@ -2,6 +2,7 @@ import React from "react";
 import Routes from "./routes";
 import { Application } from "react-rainbow-components";
 import ApplicationProvider from "./Contexts/ApplicationContext";
+import GlobalStyle from "./Styles/GlobalStyle";
 
 function App() {
   const theme = {
@@ -14,7 +15,8 @@ function App() {
 
   return (
     <Application theme={theme}>
-      <ApplicationProvider >
+      <GlobalStyle />
+      <ApplicationProvider>
         <Routes />
       </ApplicationProvider>
     </Application>
