@@ -1,5 +1,6 @@
 import React, { useState, createContext } from "react";
 import { Api } from "../Services/Api";
+import Toast from "../Utils/Toast";
 
 export const ApplicationContext = createContext();
 
@@ -14,33 +15,41 @@ const ApplicationProvider = ({ children }) => {
     errors: {},
   });
   const productStorageKey = `@digi-app/productsCheckout/`;
-  const userStorageKey = `@digi-app/autheticatedUser/`;
+  const userStorageKey = `@digi-app/autheticatedUserToken/`;
 
   async function login(email, password) {
-    Api.post("/login", { email, password }).then((result) => {
-      localStorage.setItem(
-        userStorageKey,
-        JSON.stringify({ token: result.headers.authorization })
-      );
-      updateUserInState();
-      console.log(result);
-    });
+    Api.post("/login", { email, password })
+      .then((result) => {
+        localStorage.setItem(
+          userStorageKey,
+          JSON.stringify(result.headers.authorization)
+        );
+        loadUser();
+      })
+      .catch((error) => {
+        Toast.fire({
+          icon: "error",
+          title: "Usuário ou snha inválidos",
+        });
+      });
   }
 
-  function updateUserInState() {
+  function logoff() {
+    localStorage.removeItem(userStorageKey);
+    loadUser();
+  }
+
+  function loadUser() {
     if (localStorage.getItem(userStorageKey) !== null) {
-      let token = JSON.parse(localStorage.getItem(userStorageKey));
-      const options = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token.token,
-        },
-      };
-      Api.get(`/clients/`, options).then((result) => {
-        let userData = result.data;
-        userData.authorization = token;
-        setAutheticatedUser(result.data);
-      });
+      Api.get(`/clients/`)
+        .then((response) => {
+          setAutheticatedUser(response.data);
+        })
+        .catch(() => {
+          setAutheticatedUser({});
+        });
+    } else {
+      setAutheticatedUser({});
     }
   }
 
@@ -105,6 +114,8 @@ const ApplicationProvider = ({ children }) => {
     <ApplicationContext.Provider
       value={{
         login,
+        logoff,
+        loadUser,
         globalSearch,
         setGlobalSearch,
         checkoutProducts,
@@ -117,7 +128,6 @@ const ApplicationProvider = ({ children }) => {
         clientCheckoutData,
         setClientCheckoutData,
         removeProductInCheckoutById,
-        updateUserInState,
         authenticatedUser,
         setAutheticatedUser,
       }}
