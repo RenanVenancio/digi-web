@@ -11,31 +11,45 @@ import { Api } from "../../Services/Api";
 import { FaCashRegister } from "react-icons/fa";
 
 function OrderList() {
-  const [orderListData, setOrderListData] = useState([]);
+  const [orderListData, setOrderListData] = useState({
+    content: [],
+    pageable: {
+      sort: {
+        sorted: true,
+        unsorted: false,
+        empty: false,
+      },
+      offset: 0,
+      pageNumber: 0,
+      pageSize: 0,
+      unpaged: false,
+      paged: true,
+    },
+    last: true,
+    totalPages: 0,
+    totalElements: 0,
+    number: 0,
+    size: 0,
+    first: true,
+    numberOfElements: 0,
+    empty: false,
+  });
   const [currentPage, setCurrentPage] = useState({ currentPage: 0 });
   const [loading, setLoading] = useState(true);
-  const { company, authenticatedUser } = useContext(ApplicationContext);
+  const { company } = useContext(ApplicationContext);
 
   useEffect(() => {
-    if (company !== "" &&  "authorization" in authenticatedUser) {
-      console.log(authenticatedUser);
-      const options = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: authenticatedUser.authorization.token !== null ? authenticatedUser.authorization.token : null
-        },
-      };
-      Api.get(
-        `${company}/order/?page=${currentPage.currentPage}`,
-        options
-      ).then((response) => {
-        setOrderListData(response.data);
-        setLoading(false);
-      });
+    if (company !== "") {
+      Api.get(`${company}/order/?page=${currentPage.currentPage}`)
+        .then((response) => {
+          setOrderListData(response.data);
+          setLoading(false);
+        })
+       ;
     }
   }, [company, currentPage]);
 
-  const handleOnChange = (event, page) => {
+  const handleOnChange = (page) => {
     setCurrentPage({ currentPage: page - 1 });
   };
 
