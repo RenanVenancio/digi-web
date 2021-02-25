@@ -13,11 +13,13 @@ export default function CategoriesList() {
   }, [company]);
 
   async function loadCaregories() {
-    await Api.get(`${baseURL}/${company}/product/categories/`).then(
-      (result) => {
-        setCategoriesList(result.data);
-      }
-    );
+    if(company !== "") {
+      await Api.get(`${company}/product/categories/`).then(
+        (result) => {
+          setCategoriesList(result.data);
+        }
+      );
+    }
   }
 
   return (
