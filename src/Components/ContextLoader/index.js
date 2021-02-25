@@ -4,14 +4,15 @@ import { ApplicationContext } from "../../Contexts/ApplicationContext";
 
 // RESPONSÁVEL POR ATUALIZAR O CONTEXTO GLOBAL DA APLICAÇÃO
 function ContextLoader({ company }) {
-  const { updateCheckoutProducts, setCompany,updateUserInState } = useContext(
+  const { updateCheckoutProducts, setCompany, loadUser } = useContext(
     ApplicationContext
   );
 
   useEffect(() => {
+    console.log(company)
+    loadUser();
     setCompany(company);
     updateCheckoutProducts(company);
-    updateUserInState()
   }, [company]);
 
   return null;
