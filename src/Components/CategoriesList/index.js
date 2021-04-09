@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Row, Col, Image, Card, Titile, Container } from "./styles";
-import { Api, baseURL } from "../../Services/Api";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 import { ApplicationContext } from "../../Contexts/ApplicationContext";
+import { Api, baseURL } from "../../Services/Api";
+import DigiCard from "../DigiCard";
+import Grid from "../Grid";
 
 export default function CategoriesList() {
   const { company } = useContext(ApplicationContext);
@@ -13,39 +15,28 @@ export default function CategoriesList() {
   }, [company]);
 
   async function loadCaregories() {
-    if(company !== "") {
-      await Api.get(`${company}/product/categories/`).then(
-        (result) => {
-          setCategoriesList(result.data);
-        }
-      );
+    if (company !== "") {
+      await Api.get(`${company}/product/categories/`).then((result) => {
+        setCategoriesList(result.data);
+      });
     }
   }
 
   return (
-    <Container>
+    <Grid>
       {categoriesList.map((i) => (
         <Link
           key={i.id}
           to={`productsearch?category=${i.id}`}
           style={{ color: "inherit", textDecoration: "inherit" }}
         >
-          <Card>
-            <Col>
-              <Row center>
-                <Image
-                  src={`${baseURL}/${i.company}/attachments/${i.attachment}`}
-                />
-              </Row>
-              <Col padding={10}>
-                <Row>
-                  <Titile>{i.name}</Titile>
-                </Row>
-              </Col>
-            </Col>
-          </Card>
+          <DigiCard
+            key={i.id}
+            title={i.name}
+            imageUrl={`${baseURL}/${i.company}/attachments/${i.attachment}`}
+          />
         </Link>
       ))}
-    </Container>
+    </Grid>
   );
 }

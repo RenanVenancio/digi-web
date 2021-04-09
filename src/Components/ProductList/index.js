@@ -1,31 +1,42 @@
-import React, { useContext, useState, useEffect } from "react";
-import {
-  Table,
-  Column,
-  Card,
-  Avatar,
-  Pagination,
-} from "react-rainbow-components";
+import React, { useContext, useEffect, useState } from "react";
+import { FaBoxes, FaEdit, FaPlus } from "react-icons/fa";
+import { Avatar, ButtonIcon, Card, Column, Pagination, Table } from "react-rainbow-components";
+import { Link } from "react-router-dom";
+
 import { ApplicationContext } from "../../Contexts/ApplicationContext";
 import { Api } from "../../Services/Api";
-import { FaBoxes } from "react-icons/fa";
 import ProductImage from "../ProductImage";
-import { Col, Price, Description, Titile } from "./styles";
+import { Col, Description, Price, Titile } from "./styles";
 
 function ProductList() {
-  const [productListData, setProductListData] = useState([]);
+  const [productListData, setProductListData] = useState({
+    content: [],
+    last: true,
+    totalPages: 1,
+    totalElements: 3,
+    number: 0,
+    size: 24,
+    first: true,
+    numberOfElements: 0,
+    empty: false,
+  });
   const [currentPage, setCurrentPage] = useState({ currentPage: 0 });
   const [loading, setLoading] = useState(true);
-  const { company, authenticatedUser, globalSearch } = useContext(ApplicationContext);
+
+  const {
+    company,
+    authenticatedUser,
+    globalSearch,
+    setShowGlobalSearch,
+  } = useContext(ApplicationContext);
 
   useEffect(() => {
     if (company !== "") {
-      console.log(company);
+      setShowGlobalSearch(true);
       const options = {
         headers: {
           "Content-Type": "application/json",
-          Authorization: authenticatedUser.token
-            
+          Authorization: authenticatedUser.token,
         },
       };
       Api.get(
@@ -43,7 +54,6 @@ function ProductList() {
   };
 
   const cardStyle = {
-    width: "95%",
     marginLeft: "auto",
     marginRight: "auto",
   };
@@ -52,15 +62,25 @@ function ProductList() {
     <>
       <Card
         style={cardStyle}
+        className="rainbow-p-bottom_xx-large"
         icon={<Avatar icon={<FaBoxes />} />}
         title="Produtos"
+        actions={
+          <Link to={`/${company}/admin/products/product/`}>
+            <ButtonIcon
+              variant="border"
+              tooltip="Cadastrar um novo item"
+              icon={<FaPlus />}
+            />
+          </Link>
+        }
         children={
           <div className="rainbow-m-bottom_xx-large">
             <Table
+              keyField="id"
               isLoading={loading}
               pageSize={productListData.numberOfElements}
               data={productListData.content}
-              keyField="id"
             >
               <Column header="#ID" field="id" width={80} />
               <Column
@@ -69,14 +89,24 @@ function ProductList() {
               />
               <Column
                 header="Nome"
-                component={({row}) => (
-                  <Col padding={2}>
+                component={({ row }) => (
+                  <Col>
                     <Titile>{row.name}</Titile>
-                    <Description>{row.description}</Description>
+                    <Description style={{paddingTop: "0px"}}>{row.description}</Description>
                     <Price>R${row.salePrice}</Price>
                   </Col>
                 )}
               />
+              <Column
+                width={60}
+                component={({ row }) => (
+                  <div className="rainbow-p-right_large">
+                    <Link to={`/${company}/admin/products/product/${row.id}`}>
+                      <ButtonIcon variant="neutral" icon={<FaEdit />} />
+                    </Link>
+                  </div>
+                )}
+              ></Column>
             </Table>
           </div>
         }
