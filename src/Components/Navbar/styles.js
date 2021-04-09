@@ -13,6 +13,7 @@ export const Nav = styled.nav`
   height: 5rem;
   z-index: 999;
   background-color: #f4f4f2;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
   img {
     width: 80px;
     height: 80px;

@@ -7,8 +7,8 @@ function GlobalSearchInput() {
   const {
     globalSearch,
     setGlobalSearch,
-    showProductSearch,
-    setShowProductSearch,
+    showGlobalSearch,
+    setShowGlobalSearch,
   } = useContext(ApplicationContext);
 
   function handleChange(e) {
@@ -23,7 +23,7 @@ function GlobalSearchInput() {
 
   return (
     <>
-      {showProductSearch ? (
+      {showGlobalSearch ? (
         <Input
           style={inputStyles}
           value={globalSearch}

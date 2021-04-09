@@ -1,10 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ApplicationContext } from "../../Contexts/ApplicationContext";
-import { Subtotal, Col, Row } from "./styles";
-import { Input } from "react-rainbow-components";
 import { FaMoneyBill } from "react-icons/fa";
+import { Input } from "react-rainbow-components";
 
-function OrderSubtotal({ otherCosts, variation }) {
+import { ApplicationContext } from "../../Contexts/ApplicationContext";
+import { Col, Row, Subtotal } from "./styles";
+
+function OrderSubtotal({
+  otherCosts,
+  variation,
+  freightCost,
+  additionalValue,
+}) {
   const { checkoutProducts } = useContext(ApplicationContext);
   const [subtotal, setSubtotal] = useState("0,00");
 
@@ -13,11 +19,9 @@ function OrderSubtotal({ otherCosts, variation }) {
   }, [checkoutProducts, otherCosts]);
 
   function sumSubtotal() {
-    let initialValue;
-    if (otherCosts !== undefined) {
-      initialValue = otherCosts;
-    } else {
-      initialValue = 0;
+    let initialValue = 0;
+    if (typeof additionalValue !== "undefined") {
+      initialValue += additionalValue;
     }
     checkoutProducts.products.map((i) => {
       initialValue += i.salePrice * i.quantity;
@@ -46,12 +50,26 @@ function OrderSubtotal({ otherCosts, variation }) {
           className="rainbow-p-around_medium"
         />
       ) : (
-        <Col>
-          <Row>Total:</Row>
-          <Row>
-            <Subtotal>R${subtotal}</Subtotal>{" "}
-          </Row>
-        </Col>
+        <>
+          <Col>
+            <Row>Frete:</Row>
+            <Row>
+              <Subtotal>
+                R$
+                {freightCost.toLocaleString("pt-br", {
+                  minimumFractionDigits: 2,
+                })}
+              </Subtotal>
+            </Row>
+          </Col>
+          <br />
+          <Col>
+            <Row>Total:</Row>
+            <Row>
+              <Subtotal>R${subtotal}</Subtotal>{" "}
+            </Row>
+          </Col>
+        </>
       )}
     </>
   );

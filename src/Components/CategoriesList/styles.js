@@ -47,12 +47,14 @@ export const Container = styled.div`
   grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   margin: auto;
-  max-width: 80%;
   ${Card} {
     width: 100%;
   }
   @media (max-width: 830px) {
     grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 550px) {
+    grid-template-columns: repeat(1, 1fr);
   }
 `;
 

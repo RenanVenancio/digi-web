@@ -1,4 +1,5 @@
-import React, { useState, createContext } from "react";
+import React, { createContext, useState } from "react";
+
 import { Api } from "../Services/Api";
 import Toast from "../Utils/Toast";
 
@@ -7,7 +8,7 @@ export const ApplicationContext = createContext();
 const ApplicationProvider = ({ children }) => {
   const [company, setCompany] = useState("");
   const [authenticatedUser, setAutheticatedUser] = useState({});
-  const [showProductSearch, setShowProductSearch] = useState(false);
+  const [showGlobalSearch, setShowGlobalSearch] = useState(false);
   const [globalSearch, setGlobalSearch] = useState("");
   const [checkoutProducts, setCheckoutProducts] = useState({ products: [] });
   const [clientCheckoutData, setClientCheckoutData] = useState({
@@ -15,18 +16,22 @@ const ApplicationProvider = ({ children }) => {
     errors: {},
   });
   const productStorageKey = `@digi-app/productsCheckout/`;
-  const userStorageKey = `@digi-app/autheticatedUserToken/`;
+  const userStorageKey = `@digi-app/autheticatedUser/`;
+  const clientStorageKey = `@digi-app/clientCheckoutData/`;
 
   async function login(email, password) {
-    Api.post("/login", { email, password })
-      .then((result) => {
+    await Api.post("/login", { email, password })
+      .then(async (result) => {
         localStorage.setItem(
           userStorageKey,
           JSON.stringify(result.headers.authorization)
         );
-        loadUser();
+        Toast.fire({
+          icon: "success",
+          title: "Login efetuado com sucesso!",
+        });
       })
-      .catch((error) => {
+      .catch(() => {
         Toast.fire({
           icon: "error",
           title: "Usuário ou snha inválidos",
@@ -39,9 +44,10 @@ const ApplicationProvider = ({ children }) => {
     loadUser();
   }
 
-  function loadUser() {
+  async function loadUser() {
+    console.log(localStorage.getItem(userStorageKey));
     if (localStorage.getItem(userStorageKey) !== null) {
-      Api.get(`/clients/`)
+      await Api.get(`/clients/`)
         .then((response) => {
           setAutheticatedUser(response.data);
         })
@@ -49,7 +55,19 @@ const ApplicationProvider = ({ children }) => {
           setAutheticatedUser({});
         });
     } else {
-      setAutheticatedUser({});
+      return null;
+    }
+  }
+
+  function setClientCheckoutDataStorage(data) {
+    if (localStorage.getItem(clientStorageKey) === null) {
+      localStorage.setItem(clientStorageKey, JSON.stringify(data));
+    }
+  }
+
+  function updateClientDataStorage() {
+    if (localStorage.getItem(clientStorageKey) !== null) {
+      setClientCheckoutData(JSON.parse(localStorage.getItem(clientStorageKey)));
     }
   }
 
@@ -95,6 +113,11 @@ const ApplicationProvider = ({ children }) => {
     updateCheckoutProducts(company);
   }
 
+  function removeAllProductInCheckout() {
+    localStorage.removeItem(productStorageKey + company);
+    setCheckoutProducts({ products: [] });
+  }
+
   function updateCheckoutProducts(company) {
     let localStorageState = localStorage.getItem(productStorageKey + company);
     if (localStorageState !== null) {
@@ -121,15 +144,18 @@ const ApplicationProvider = ({ children }) => {
         checkoutProducts,
         addProductInCheckout,
         updateCheckoutProducts,
-        showProductSearch,
-        setShowProductSearch,
+        showGlobalSearch,
+        setShowGlobalSearch,
         company,
         setCompany,
         clientCheckoutData,
         setClientCheckoutData,
         removeProductInCheckoutById,
+        removeAllProductInCheckout,
         authenticatedUser,
         setAutheticatedUser,
+        setClientCheckoutDataStorage,
+        updateClientDataStorage,
       }}
     >
       {children}

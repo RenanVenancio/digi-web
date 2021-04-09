@@ -1,9 +1,10 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { FaLocationArrow, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
+import { Card } from "react-rainbow-components";
+
 import { ApplicationContext } from "../../Contexts/ApplicationContext";
 import { Api } from "../../Services/Api";
-import { Card } from "react-rainbow-components";
-import { FaLocationArrow, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
-import { Row, Col } from "./styles";
+import { Col, Row } from "./styles";
 
 function CompanyLocation() {
   const { company } = useContext(ApplicationContext);
@@ -34,7 +35,6 @@ function CompanyLocation() {
 
   async function loadCompany() {
     await Api.get(`${company}/companies/`).then((result) => {
-      console.log(result.data);
       setCompanyData(result.data);
     });
   }
