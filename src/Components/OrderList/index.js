@@ -1,16 +1,13 @@
-import React, { useContext, useState, useEffect } from "react";
-import {
-  Table,
-  Column,
-  Card,
-  Avatar,
-  Pagination,
-} from "react-rainbow-components";
+import PropTypes from "prop-types";
+import React, { useContext, useEffect, useState } from "react";
+import { FaCashRegister, FaFolderOpen } from "react-icons/fa";
+import { Avatar, ButtonIcon, Card, Column, Pagination, Table } from "react-rainbow-components";
+import { Link } from "react-router-dom";
+
 import { ApplicationContext } from "../../Contexts/ApplicationContext";
 import { Api } from "../../Services/Api";
-import { FaCashRegister } from "react-icons/fa";
 
-function OrderList() {
+function OrderList({ adminPerspective }) {
   const [orderListData, setOrderListData] = useState({
     content: [],
     pageable: {
@@ -36,25 +33,33 @@ function OrderList() {
   });
   const [currentPage, setCurrentPage] = useState({ currentPage: 0 });
   const [loading, setLoading] = useState(true);
-  const { company } = useContext(ApplicationContext);
+  const { company, clientCheckoutData } = useContext(ApplicationContext);
 
   useEffect(() => {
     if (company !== "") {
-      Api.get(`${company}/order/?page=${currentPage.currentPage}`)
-        .then((response) => {
+      if (adminPerspective) {
+        Api.get(`${company}/order/?page=${currentPage.currentPage}&direction=DESC`).then(
+          (response) => {
+            setOrderListData(response.data);
+            setLoading(false);
+          }
+        );
+      } else {
+        Api.get(
+          `${company}/order/client/${clientCheckoutData.id}?page=${currentPage.currentPage}&direction=DESC`
+        ).then((response) => {
           setOrderListData(response.data);
           setLoading(false);
-        })
-       ;
+        });
+      }
     }
   }, [company, currentPage]);
 
-  const handleOnChange = (page) => {
+  const handleOnChange = (event, page) => {
     setCurrentPage({ currentPage: page - 1 });
   };
 
   const cardStyle = {
-    width: "95%",
     marginLeft: "auto",
     marginRight: "auto",
   };
@@ -71,9 +76,9 @@ function OrderList() {
               isLoading={loading}
               pageSize={orderListData.numberOfElements}
               data={orderListData.content}
-              keyField="id"
+              keyField={"id"}
             >
-              <Column width={90} header="#ID" field="id" />
+              <Column width={80} header="#ID" field="id" />
               <Column
                 width={120}
                 header="Data"
@@ -84,6 +89,16 @@ function OrderList() {
               <Column header="Cliente" field="client.name" />
               <Column header="Endereço" field="address.street" />
               <Column header="Total" field="total" />
+              <Column
+                width={60}
+                component={({ row }) => (
+                  <div className="rainbow-p-right_large">
+                    <Link to={`${adminPerspective === false ? `/${company}/orders/order/${row.id}/` : `/${company}/admin/orders/order/${row.id}`}`}>
+                      <ButtonIcon variant="neutral" icon={<FaFolderOpen />} />
+                    </Link>
+                  </div>
+                )}
+              />
             </Table>
           </div>
         }
@@ -99,5 +114,13 @@ function OrderList() {
     </>
   );
 }
+
+OrderList.propTypes = {
+  adminPerspective: PropTypes.bool,
+};
+
+OrderList.defaultProps = {
+  adminPerspective: false,
+};
 
 export default OrderList;

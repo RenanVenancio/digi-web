@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Table, Column, ButtonIcon } from "react-rainbow-components";
+import { Table, Column, ButtonIcon, Button } from "react-rainbow-components";
 import { ApplicationContext } from "../../Contexts/ApplicationContext";
 import { FaTrash } from "react-icons/fa";
 import OrderSubTotal from "../OrderSubTotal";
@@ -7,14 +7,18 @@ import ProductImage from "../ProductImage";
 import { TableFooter, Col, Row } from "./styles";
 import ProductCounter from "../ProductCounter";
 
-export default function ProductCartList({ otherCosts }) {
+export default function ProductCartList({
+  freightCost,
+  handleNextClick,
+  handleBackClick,
+  additionalValue
+}) {
   const { checkoutProducts, removeProductInCheckoutById } = useContext(
     ApplicationContext
   );
 
   function DeleteIcon(props) {
     const { row, onDeleteElement } = props;
-
     return (
       <ButtonIcon
         onClick={() => onDeleteElement(row.id)}
@@ -73,10 +77,25 @@ export default function ProductCartList({ otherCosts }) {
       <TableFooter>
         <Row justify="end">
           <Col justify="flex-end">
-            <OrderSubTotal otherCosts={otherCosts} />
+            <OrderSubTotal freightCost={freightCost} additionalValue={additionalValue}/>
           </Col>
         </Row>
       </TableFooter>
+
+      <div className="rainbow-m-top_xx-large rainbow-m-bottom_xx-large rainbow-align-content_center rainbow-flex_wrap">
+        <Button
+          label="Voltar"
+          onClick={handleBackClick}
+          variant="neutral"
+          className="rainbow-m-horizontal_medium"
+        />
+        <Button
+          label="Prosseguir"
+          onClick={handleNextClick}
+          variant="brand"
+          className="rainbow-m-horizontal_medium"
+        />
+      </div>
     </>
   );
 }

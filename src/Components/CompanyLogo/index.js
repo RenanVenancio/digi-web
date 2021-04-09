@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
+
+import digishop from "../../Assets/digishopcolor.png";
+import { ApplicationContext } from "../../Contexts/ApplicationContext";
 import { Api, baseURL } from "../../Services/Api";
 import { Image } from "./styles";
-import { ApplicationContext } from "../../Contexts/ApplicationContext";
-import digishop from "../../Assets/digishopcolor.png";
 
-function CompanyLogo() {
+function CompanyLogo({ width }) {
   const { company } = useContext(ApplicationContext);
   const [companyData, setCompanyData] = useState({});
   useEffect(() => {
@@ -16,6 +17,7 @@ function CompanyLogo() {
   }, [company]);
   return (
     <Image
+      width={width}
       src={
         companyData.logo === undefined || companyData.logo === null
           ? digishop

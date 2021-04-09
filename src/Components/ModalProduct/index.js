@@ -1,22 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Modal, Button } from "react-rainbow-components";
-import { Api, baseURL } from "../../Services/Api";
-import { Spinner, Input, ButtonIcon } from "react-rainbow-components";
-import {
-  Image,
-  QuantityContainer,
-  FooterContainer,
-  Subtotal,
-  Container,
-  Row
-} from "./styles";
+import React, { useContext, useEffect, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { Button, ButtonIcon, Input, Modal, Spinner } from "react-rainbow-components";
+
 import { ApplicationContext } from "../../Contexts/ApplicationContext";
+import { Api, baseURL } from "../../Services/Api";
+import { Container, FooterContainer, Image, QuantityContainer, Row, Subtotal } from "./styles";
 
 function ModalProduct(props) {
-  const { addProductInCheckout } = useContext(
-    ApplicationContext
-  );
+  const { addProductInCheckout } = useContext(ApplicationContext);
   const [isOpen, setIsopen] = useState(true);
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
@@ -83,7 +74,7 @@ function ModalProduct(props) {
             })}
           </Subtotal>
           <Button
-            label="Colocar na Sacola"
+            label="Colocar no carrinho"
             variant="brand"
             onClick={() => saveInStorage()}
           />

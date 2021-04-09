@@ -1,13 +1,16 @@
-import React, { useContext } from "react";
 import { useFormik } from "formik";
-import { ApplicationContext } from "../../Contexts/ApplicationContext";
-import { Input, Button } from "react-rainbow-components";
+import React, { useContext, useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
+import { Button, Input } from "react-rainbow-components";
+import { Redirect } from "react-router";
 import * as Yup from "yup";
+
+import { ApplicationContext } from "../../Contexts/ApplicationContext";
 import { Col, Row } from "./styles";
 
-function LoginForm() {
-  const { login } = useContext(ApplicationContext);
+function LoginForm({ onRequestLogin, redirectTo }) {
+  const { login, company } = useContext(ApplicationContext);
+  const [redirect, setRedirect] = useState("");
   const validationSchema = Yup.object().shape({
     email: Yup.string()
       .email()
@@ -24,19 +27,30 @@ function LoginForm() {
     validationSchema,
   });
 
+  const handleLogin = async () => {
+    await login(values.email, values.password).then(() => {
+      if (onRequestLogin !== null && typeof onRequestLogin !== "undefined") {
+        onRequestLogin();
+      }
+      if (typeof redirectTo !== "undefined" && redirectTo !== "") {
+        setRedirect(redirectTo);
+      }
+    });
+  };
+
   const inputStyles = (value) => {
     return { width: value + "%" };
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    await login(values.email, values.password);
-  };
-
   return (
     <Col center>
+      {typeof redirect !== "undefined" && redirect !== "" ? (
+        <Redirect to={{ pathname: `/${company}/${redirectTo}` }} />
+      ) : (
+        ""
+      )}
       <Row center>
-        <form onSubmit={handleSubmit} style={{ width: "400px" }}>
+        <form onSubmit={handleLogin} style={{ width: "400px" }}>
           <Input
             name="email"
             label="E-mail"
@@ -64,7 +78,7 @@ function LoginForm() {
           <Button
             variant="neutral"
             className="rainbow-m-around_medium"
-            type="submit"
+            onClick={handleLogin}
           >
             Entrar
             <FaArrowRight />

@@ -14,6 +14,5 @@ export const Col = styled.div`
     padding: ${props => props.padding + "px"};
     justify-content: ${props => props.center ? "center": "start"};
     display: flex;
-    flex: 1;
     flex-direction: column;
 `

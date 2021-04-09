@@ -10,6 +10,12 @@ const GlobalStyle = createGlobalStyle`
     
     html {
         z-index: -100;
+        height: 100%;
+        background-color: #ebebeb !important;
+    }
+
+    body {
+        height: 100%
     }
 
     button {
@@ -18,6 +24,10 @@ const GlobalStyle = createGlobalStyle`
 
     .swal-toast {
         z-index: 9999999999;
+    }
+
+    #root {
+        height: 100% !important;
     }
 `;
 

@@ -1,7 +1,8 @@
 import React from "react";
-import Routes from "./routes";
 import { Application } from "react-rainbow-components";
+
 import ApplicationProvider from "./Contexts/ApplicationContext";
+import Routes from "./routes";
 import GlobalStyle from "./Styles/GlobalStyle";
 
 function App() {
@@ -14,9 +15,9 @@ function App() {
   };
 
   return (
-    <Application theme={theme}>
-      <GlobalStyle />
+    <Application theme={theme} style={{height: "100%"}}>
       <ApplicationProvider>
+        <GlobalStyle />
         <Routes />
       </ApplicationProvider>
     </Application>

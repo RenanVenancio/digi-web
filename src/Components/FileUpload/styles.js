@@ -10,7 +10,6 @@ export const Image = styled.img`
   margin-right: auto;
   margin-bottom: 5px;
   border: solid 1px #a4a7b5;
-
 `;
 export const QuantityContainer = styled.div`
   display: flex;
@@ -46,13 +45,20 @@ export const Container = styled.div`
 export const Row = styled.div`
   display: flex;
   flex: 1;
-  justify-content: ${(props) => (props.center ? "center" : "start")};
+  justify-content: "${(props) => (props.center ? "center" : "start")}";
   flex-direction: row;
+  margin-left: 20px;
+  margin-right: 10px;
 `;
 
 export const Col = styled.div`
+  width: 160px;
   padding: ${(props) => props.padding + "px"};
   justify-content: ${(props) => (props.center ? "center" : "start")};
   display: flex;
   flex-direction: column;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: 20px;
+  margin-right: 10px;
 `;

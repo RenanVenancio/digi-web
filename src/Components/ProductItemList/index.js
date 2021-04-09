@@ -1,18 +1,14 @@
-import React, { useState, useEffect, useContext } from "react";
-import {
-  Card,
-  Image,
-  Row,
-  Titile,
-  Col,
-  Description,
-  Price,
-  Container,
-} from "./styles";
-import { Api, baseURL } from "../../Services/Api";
+import React, { useContext, useEffect, useState } from "react";
 import { Spinner } from "react-rainbow-components";
+
+import empty from "../../Assets/empty.svg";
 import ModalProduct from "../../Components/ModalProduct";
 import { ApplicationContext } from "../../Contexts/ApplicationContext";
+import { Api, baseURL } from "../../Services/Api";
+import BackgroundImage from "../BackgroundImage";
+import DigiCard from "../DigiCard";
+import Grid from "../Grid";
+import { Card, Col, Container, Description, Image, Price, Row, Titile } from "./styles";
 
 export default function ProductItemList(props) {
   const [loading, setLoading] = useState(true);
@@ -20,7 +16,7 @@ export default function ProductItemList(props) {
   const [productList, setProductList] = useState({ content: [] });
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  const { globalSearch, setShowProductSearch } = useContext(ApplicationContext);
+  const { globalSearch, setShowGlobalSearch } = useContext(ApplicationContext);
   function openModal(productId) {
     setProductIdForModal(productId);
     setModalIsOpen(!modalIsOpen);
@@ -28,7 +24,7 @@ export default function ProductItemList(props) {
 
   useEffect(() => {
     loadProducts();
-    setShowProductSearch(true);
+    setShowGlobalSearch(true);
   }, [globalSearch]);
 
   async function loadProducts() {
@@ -41,29 +37,29 @@ export default function ProductItemList(props) {
   }
 
   return (
-    <Container>
-      <Spinner size="large" variant="brand" isVisible={loading} />
-      <ModalProduct
-        isOpen={modalIsOpen}
-        id={productIdForModal}
-        company={props.company}
-      />
-      {productList.content.map((i) => (
-        <Card onClick={() => openModal(i.id)} key={i.id}>
-          <Col>
-            <Row center>
-              <Image
-                src={`${baseURL}/${props.company}/attachments/${i.attachment}`}
-              />
-            </Row>
-            <Col padding={10}>
-              <Titile>{i.name}</Titile>
-              <Description>{i.description}</Description>
-              <Price>R${i.salePrice}</Price>
-            </Col>
-          </Col>
-        </Card>
-      ))}
-    </Container>
+    <>
+      {productList.content.length === 0 && !loading ? (
+        <BackgroundImage asset={empty} text="Nada encontrado :(" />
+      ) : (
+        <Grid>
+          <Spinner size="large" variant="brand" isVisible={loading} />
+          <ModalProduct
+            isOpen={modalIsOpen}
+            id={productIdForModal}
+            company={props.company}
+          />
+          {productList.content.map((i) => (
+            <DigiCard
+              onClick={() => openModal(i.id)}
+              key={i.id}
+              title={i.name}
+              description={i.description}
+              price={i.salePrice}
+              imageUrl={`${baseURL}/${props.company}/attachments/${i.attachment}`}
+            />
+          ))}
+        </Grid>
+      )}
+    </>
   );
 }

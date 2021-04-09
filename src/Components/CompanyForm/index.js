@@ -1,24 +1,17 @@
-import React, { useEffect, useState, useContext } from "react";
 import { useFormik } from "formik";
+import React, { useContext, useEffect, useState } from "react";
+import { FaSave, FaStore } from "react-icons/fa";
+import { Avatar, Button, Card, Input, Select } from "react-rainbow-components";
 import * as Yup from "yup";
-import { Api } from "../../Services/Api";
-import {
-  Card,
-  Avatar,
-  Button,
-  FileSelector,
-  Select,
-  Input,
-} from "react-rainbow-components";
-import { FaStore, FaSave } from "react-icons/fa";
-import { States } from "../../Utils/States";
-import { Row } from "./styles";
+
 import { ApplicationContext } from "../../Contexts/ApplicationContext";
+import { Api } from "../../Services/Api";
+import { States } from "../../Utils/States";
 import Toast from "../../Utils/Toast";
 import FileUpload from "../FileUpload";
+import { Row } from "./styles";
 
 function CompanyForm() {
-  const [companyData, setCompanyData] = useState({});
   const [companyLogo, setCompanyLogo] = useState();
   const { company } = useContext(ApplicationContext);
   const validationSchema = Yup.object().shape({
@@ -39,22 +32,23 @@ function CompanyForm() {
   });
 
   useEffect(() => {
-    Api.get(`${company}/companies`).then((response) => {
-      let data = response.data;
-      formik.values.domain = data.domain;
-      formik.values.cpfCnpj = data.cpfCnpj;
-      formik.values.name = data.name;
-      formik.values.email = data.email;
-      formik.values.street = data.address.street;
-      formik.values.neighborhood = data.address.neighborhood;
-      formik.values.complement = data.address.complement;
-      formik.values.zipcode = data.address.zipcode;
-      formik.values.city = data.address.city;
-      formik.values.state = data.address.state;
-      formik.values.logo = data.logo;
-      setCompanyData(response.data);
-      setCompanyLogo(response.data.logo);
-    });
+    if (company !== "" && typeof company !== "undefined") {
+      Api.get(`${company}/companies`).then((response) => {
+        let data = response.data;
+        formik.values.domain = data.domain;
+        formik.values.cpfCnpj = data.cpfCnpj;
+        formik.values.name = data.name;
+        formik.values.email = data.email;
+        formik.values.street = data.address.street;
+        formik.values.neighborhood = data.address.neighborhood;
+        formik.values.complement = data.address.complement;
+        formik.values.zipcode = data.address.zipcode;
+        formik.values.city = data.address.city;
+        formik.values.state = data.address.state;
+        formik.values.logo = data.logo;
+        setCompanyLogo(response.data.logo);
+      });
+    }
   }, [company]);
 
   const formik = useFormik({
@@ -102,8 +96,11 @@ function CompanyForm() {
           title: "Seus dados foram salvos com sucesso!",
         });
       })
-      .catch((e) => {
-        console.log(e);
+      .catch((error) => {
+        Toast.fire({
+          icon: "success",
+          title: error.response.data.msg,
+        }).then((e) => {});
       });
   };
 
@@ -116,10 +113,11 @@ function CompanyForm() {
   };
 
   const cardStyle = {
-    width: "85%",
     marginLeft: "auto",
     marginRight: "auto",
   };
+
+  const inputLabelAlign = "left";
 
   return (
     <>
@@ -129,16 +127,17 @@ function CompanyForm() {
         title="Dados da Empresa"
         children={
           <>
-            <Row center>
-              <FileUpload
-                attachmentId={companyLogo}
-                setAttachmentId={setAttachmentId}
-              />
-            </Row>
             <form onSubmit={formik.handleSubmit}>
+              <Row center>
+                <FileUpload
+                  attachmentId={companyLogo}
+                  setAttachmentId={setAttachmentId}
+                />
+              </Row>
               <Row>
                 <Input
                   id="domain"
+                  labelAlignment={inputLabelAlign}
                   name="domain"
                   label="Domínio"
                   value={formik.values.domain}
@@ -152,6 +151,7 @@ function CompanyForm() {
                 />
                 <Input
                   id="cpfCnpj"
+                  labelAlignment={inputLabelAlign}
                   name="cpfCnpj"
                   label="CPF | CNPJ"
                   value={formik.values.cpfCnpj}
@@ -167,6 +167,7 @@ function CompanyForm() {
               <Row>
                 <Input
                   id="name"
+                  labelAlignment={inputLabelAlign}
                   name="name"
                   label="Nome"
                   value={formik.values.name}
@@ -180,6 +181,7 @@ function CompanyForm() {
                 />
                 <Input
                   id="email"
+                  labelAlignment={inputLabelAlign}
                   name="email"
                   label="E-mail"
                   value={formik.values.email}
@@ -195,6 +197,7 @@ function CompanyForm() {
               <Row>
                 <Input
                   id="zipcode"
+                  labelAlignment={inputLabelAlign}
                   name="zipcode"
                   label="CEP"
                   value={formik.values.zipcode}
@@ -208,6 +211,7 @@ function CompanyForm() {
                 />
                 <Input
                   id="city"
+                  labelAlignment={inputLabelAlign}
                   name="city"
                   label="Cidade"
                   value={formik.values.city}
@@ -221,6 +225,7 @@ function CompanyForm() {
                 />
                 <Select
                   id="state"
+                  labelAlignment={inputLabelAlign}
                   name="state"
                   label="Estado"
                   value={formik.values.state}
@@ -237,6 +242,7 @@ function CompanyForm() {
               <Row>
                 <Input
                   id="street"
+                  labelAlignment={inputLabelAlign}
                   name="street"
                   label="Nome da Rua"
                   value={formik.values.street}
@@ -250,6 +256,7 @@ function CompanyForm() {
                 />
                 <Input
                   id="neighborhood"
+                  labelAlignment={inputLabelAlign}
                   name="neighborhood"
                   label="Bairro"
                   value={formik.values.neighborhood}
@@ -266,6 +273,7 @@ function CompanyForm() {
               </Row>
               <Input
                 id="complement"
+                labelAlignment={inputLabelAlign}
                 name="complement"
                 label="Complemento"
                 value={formik.values.complement}

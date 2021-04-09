@@ -7,11 +7,10 @@ const Api = axios.create({
 });
 
 const token = JSON.parse(
-  window.localStorage.getItem("@digi-app/autheticatedUserToken/")
+  window.localStorage.getItem("@digi-app/autheticatedUser/")
 );
 
 if (token !== null) {
-  console.log('TEM TOKEN')
   Api.interceptors.request.use(function (config) {
     config.headers.Authorization =  token;
     return config;
