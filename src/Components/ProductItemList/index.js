@@ -55,6 +55,7 @@ export default function ProductItemList(props) {
               title={i.name}
               description={i.description}
               price={i.salePrice}
+              promotionalPrice={i.promotionalValue}
               imageUrl={`${baseURL}/${props.company}/attachments/${i.attachment}`}
             />
           ))}
